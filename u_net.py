@@ -1,9 +1,8 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 from torch.utils.data import DataLoader
-
-
+from utilities.save import to_json
+from utilities.save_image import save_mask_comparisons
 
 class UNet(nn.Module):
     def __init__(self, num_classes=35):
@@ -57,13 +56,13 @@ class UNet(nn.Module):
         out = self.final(c5)  # [B, num_classes, H, W]
         return out
 
-def train(model, train_dataset, val_dataset,  batch_size, num_epochs, lr, num_classes):
+def train_unet(model, train_dataset, val_dataset,  batch_size, num_epochs, lr, num_classes):
 
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = UNet(num_classes=num_classes).to(device)
+    model = model.to(device)  # Перенос модели на GPU!
 
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
@@ -74,6 +73,17 @@ def train(model, train_dataset, val_dataset,  batch_size, num_epochs, lr, num_cl
     for epoch in range(num_epochs):
         model.train()
         running_loss = 0.0
+        print(f"epoch # [{epoch}]")
+
+        save_mask_comparisons(
+            epoch=epoch,
+            model=model,
+            dataloader=val_loader,  # Можно использовать и train_loader
+            device=device,
+            save_dir="result_image/unet",
+            num_images=min(8, batch_size)  # Сохраняем 8 изображений или весь батч, если меньше
+        )
+
 
         for batch_idx, (images, masks) in enumerate(train_loader):
             images = images.to(device)
@@ -87,26 +97,29 @@ def train(model, train_dataset, val_dataset,  batch_size, num_epochs, lr, num_cl
             loss.backward()
             optimizer.step()
             running_loss += loss.item()
-            print(f"Step [{batch_idx}/{len(train_loader)}] :: loss{loss.item()}")
+            print(f"Step [{batch_idx}/{len(train_loader)}] :: loss {loss.item()}")
 
-    avg_train_loss = running_loss / len(train_loader)
-    train_loss_history.append(avg_train_loss)
+        avg_train_loss = running_loss / len(train_loader)
+        train_loss_history.append(avg_train_loss)
 
-    # Валидация
-    model.eval()
-    val_loss = 0.0
-    with torch.no_grad():
-        for images, masks in val_loader:
-            images = images.to(device)
-            masks = masks.to(device).long()
-            if masks.ndim == 4:  # [B, 1, H, W]
-                masks = masks.squeeze(1)  # [B, H, W]
-            outputs = model(images)
-            loss = criterion(outputs, masks)
-            val_loss += loss.item()
+        # Валидация
+        model.eval()
+        val_loss = 0.0
+        with torch.no_grad():
+            for images, masks in val_loader:
+                images = images.to(device)
+                masks = masks.to(device).long()
+                if masks.ndim == 4:  # [B, 1, H, W]
+                    masks = masks.squeeze(1)  # [B, H, W]
+                outputs = model(images)
+                loss = criterion(outputs, masks)
+                val_loss += loss.item()
 
-    avg_val_loss = val_loss / len(val_loader)
-    val_loss_history.append(avg_val_loss)
+        avg_val_loss = val_loss / len(val_loader)
+        val_loss_history.append(avg_val_loss)
+
+    to_json("metrics/unet/train", "train_losses", train_loss_history)
+    to_json("metrics/unet/validation", "val_losses", val_loss_history)
 
     print(f"Epoch {epoch + 1}/{num_epochs} - Train Loss: {avg_train_loss:.4f} | Val Loss: {avg_val_loss: .4f}")
-    torch.save(model.state_dict(), f"unet_epoch_{epoch+1}.pth") # можно включить сохранение модели на диск
+    torch.save(model.state_dict(), f"model/model_weights.pth") # можно включить сохранение модели на диск
