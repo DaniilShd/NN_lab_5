@@ -28,7 +28,7 @@
 
 U-net спроектированная на базе предобученной модели vgg показала результата лучше. Уже к 7-й эпохе обучения модель 
 продемонстрировала результаты, сопоставимые с показателями базовой U-Net после 60 эпох. 
-Минимальное значение лосс-функции на валидации
+Минимальное значение лосс-функции на валидации 0.7
 
 Эпоха 7
 ![images](https://github.com/DaniilShd/NN_lab_5/blob/main/result_image/unetvgg/epoch_14_comparison.png)
@@ -37,18 +37,9 @@ U-net спроектированная на базе предобученной 
 ![images](https://github.com/DaniilShd/NN_lab_5/blob/main/result_image/unetvgg/epoch_59_comparison.png)
 
 Значения лосс-функции на тренировочных и валидационных данных. 
-![images](https://github.com/DaniilShd/NN_lab_5/blob/main/result_image/unet/unet.png)
-
-Правдоподобные маски сегментации начинают получаться при значениях loss-функции (Binary Cross-Entropy) в диапазоне [0.1–0.3].
-
-Эпоха 14
-![images](https://github.com/DaniilShd/NN_lab_5/blob/main/result_image/unetvgg/epoch_14_comparison.png)
-
-Эпоха 60 
-![images](https://github.com/DaniilShd/NN_lab_5/blob/main/result_image/unetvgg/epoch_59_comparison.png)
-
-Значения лосс-функции на тренировочных и валидационных данных. 
 ![images](https://github.com/DaniilShd/NN_lab_5/blob/main/result_image/unetvgg/unetvgg.png)
+
+Правдоподобные маски сегментации начинают получаться при значениях loss-функции (Binary Cross-Entropy) в диапазоне [0.5–0.7].
 
 Вывод:
 
