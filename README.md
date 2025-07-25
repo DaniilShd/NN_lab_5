@@ -17,10 +17,10 @@
 Ниже представлены скрины на 14 и 60 эпохе обучения. 
 
 Эпоха 14
-![images](https://github.com/DaniilShd/NN_lab_3/blob/main/result_image/unet/epoch_14_comparison.png)
+![images](https://github.com/DaniilShd/NN_lab_5/blob/main/result_image/unet/epoch_14_comparison.png)
 
 Эпоха 60 
-![images](https://github.com/DaniilShd/NN_lab_3/blob/main/result_image/unet/epoch_59_comparison.png)
+![images](https://github.com/DaniilShd/NN_lab_5/blob/main/result_image/unet/epoch_59_comparison.png)
 
 Правдоподобные маски сегментации начинают получаться при значениях loss-функции (Binary Cross-Entropy) в диапазоне [0.1–0.3].
 
