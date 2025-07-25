@@ -20,8 +20,8 @@ def read_json_to_list(file_path):
 
 if __name__ == "__main__":
     # base_path = "../metrics/model_base"
-    # base_path = "../metrics/unetvgg"
-    base_path = "../metrics/unet"
+    base_path = "../metrics/unetvgg"
+    # base_path = "../metrics/unet"
 
     train_losses = read_json_to_list(f"{base_path}/train/train_losses.json")
     val_losses = read_json_to_list(f"{base_path}/validation/val_losses.json")
