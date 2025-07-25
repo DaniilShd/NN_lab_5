@@ -52,10 +52,10 @@ if __name__ == "__main__":
 
     val_dataset = SimpleSegmentationDataset(X_test, Y_test)
 
-    if not os.path.exists("model/model_weights.pth"):
+    if not os.path.exists("model/final_model_weights.pth"):
         # Гиперпараметры
-        batch_size = 8
-        num_epochs = 50
+        batch_size = 6
+        num_epochs = 60
         lr = 1e-4
         num_classes = 35
 
@@ -65,10 +65,10 @@ if __name__ == "__main__":
         print("Модель уже обучена")
 
 
-    if not os.path.exists("model/model_vgg_weights.pth"):
+    if not os.path.exists("model/model_vgg_weights_new.pth"):
         # Гиперпараметры
         batch_size = 4
-        num_epochs = 40
+        num_epochs = 50
         lr = 1e-4
         num_classes = 35
 
@@ -79,7 +79,7 @@ if __name__ == "__main__":
 
     model = UNet(num_classes=35)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model.load_state_dict(torch.load('model/model_weights.pth', map_location=torch.device('cpu')))
+    model.load_state_dict(torch.load('model/model_weights_80.pth', map_location=torch.device('cpu')))
     model.to(device)
 
     output_result(model, val_dataset)

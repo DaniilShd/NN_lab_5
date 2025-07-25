@@ -13,7 +13,6 @@ class VGGUNet(nn.Module):
 
         vgg = torchvision.models.vgg16(weights=VGG16_Weights.IMAGENET1K_V1)
         features = list(vgg.features.children())
-        print(len(features))
 
         # Используем только первые 23 слоя из VGG (включая 5 блоков + MaxPool)
         self.enc1 = nn.Sequential(*features[:4])  # Conv1_1, Conv1_2
@@ -168,8 +167,10 @@ def train_vgg(model, train_dataset, val_dataset,  batch_size, num_epochs, lr, nu
         avg_val_loss = val_loss / len(val_loader)
         val_loss_history.append(avg_val_loss)
 
+        print(f"Epoch {epoch + 1}/{num_epochs} - Train Loss: {avg_train_loss:.4f} | Val Loss: {avg_val_loss: .4f}")
+
     to_json("metrics/unetvgg/train", "train_losses", train_loss_history)
     to_json("metrics/unetvgg/validation", "val_losses", val_loss_history)
 
-    print(f"Epoch {epoch + 1}/{num_epochs} - Train Loss: {avg_train_loss:.4f} | Val Loss: {avg_val_loss: .4f}")
-    torch.save(model.state_dict(), f"model/model_vgg_weights.pth") # можно включить сохранение модели на диск
+
+    torch.save(model.state_dict(), f"model/model_vgg_weights_new.pth") # можно включить сохранение модели на диск

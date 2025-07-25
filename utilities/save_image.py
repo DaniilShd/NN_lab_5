@@ -86,15 +86,15 @@ def save_mask_comparisons(epoch, model, dataloader, device, save_dir="result_ima
         save_dir (str): Директория для сохранения изображений
         num_images (int): Количество сохраняемых изображений
     """
-    if epoch % 2 != 0:  # Сохраняем только каждые 5 эпох
-        return
 
     os.makedirs(save_dir, exist_ok=True)
 
     model.eval()
     with torch.no_grad():
         # Получаем один батч данных
-        images, true_masks = next(iter(dataloader))
+        data_iter = iter(dataloader)
+        images, true_masks = next(data_iter)
+        images, true_masks = next(data_iter)
         images = images.to(device)
         true_masks = true_masks.to(device)
 
